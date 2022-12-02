@@ -102,7 +102,8 @@ read -r ans
 		count_containers=$(ssh -i $path_to_private_key root@${servers[$(expr $ans - 1)]} "docker ps --format '{{.Names}}' | grep $container_name | wc -l")
 		ssh -i $path_to_private_key root@${servers[$(expr $ans - 1)]} "docker pull $image_name >> /dev/null"
 		if (($count_containers == 0)); then
-		   echo "test"
+		   echo "starting container..."
+		   ssh -i $path_to_private_key root@${servers[$(expr $ans - 1)]} "bash -s $container_name ${keys[$(expr $ans - 1)]} $image_name" < ./docker_container.sh
 		else
 			image_id=$(ssh -i $path_to_private_key root@${servers[$(expr $ans - 1)]} "docker inspect --format='{{.Id}}' $image_name")
 			current_image_id=$(ssh -i $path_to_private_key root@${servers[$(expr $ans - 1)]} "docker inspect --format='{{.Image}}' $container_name")
@@ -115,7 +116,7 @@ read -r ans
 			fi
 	     	fi	     
 	fi
-	install_docker
+	start_container
 	;;
 0)
 main
